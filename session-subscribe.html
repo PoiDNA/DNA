@@ -4,41 +4,34 @@
 <meta charset="UTF-8">
 <title>Powiadomienia o sesjach</title>
 <style>
-  :root{--btn-bg:#f2f2f2;--btn-border:#666;--primary:#0d6efd;--white:#fff;}
-  body{margin:0;font-family:Arial,Helvetica,sans-serif;text-align:center;background:transparent}
-
+  :root { --btn-bg:#f2f2f2; --btn-border:#666; --primary:#0d6efd; --white:#fff; }
+  body  { margin:0; font-family:Arial,Helvetica,sans-serif; text-align:center; background:transparent }
   /* przycisk otwierający */
-  #toggleBtn{margin-top:8px;padding:.7em 1.4em;font-size:15px;cursor:pointer;
-             border:1px solid var(--btn-border);border-radius:6px;background:var(--btn-bg);
-             color:#333;transition:opacity .2s}
-  #toggleBtn:hover{opacity:.85}
-
+  #toggleBtn { margin-top:8px; padding:.7em 1.4em; font-size:15px; cursor:pointer;
+               border:1px solid var(--btn-border); border-radius:6px; background:var(--btn-bg);
+               color:#333; transition:opacity .2s }
+  #toggleBtn:hover { opacity:.85 }
   /* kontener formularza */
-  #formWrap{max-width:520px;margin:12px auto;padding:20px 24px;border-radius:10px;border:1px solid #ccc;
-            background:var(--white);box-shadow:0 4px 12px rgba(0,0,0,.1);display:none}
-
+  #formWrap { max-width:520px; margin:12px auto; padding:20px 24px; border-radius:10px;
+              border:1px solid #ccc; background:var(--white);
+              box-shadow:0 4px 12px rgba(0,0,0,.1); display:none }
   /* układ wiersza */
-  .row{display:flex;gap:8px;flex-wrap:wrap}
-  .emailField {flex:0 0 42%}
-  .regionField{flex:0 0 35%}
-
+  .row { display:flex; gap:8px; flex-wrap:wrap }
+  .emailField  { flex:0 0 42% }
+  .regionField { flex:0 0 35% }
   /* inputy */
-  label{display:block;width:100%}
-  input,select{width:100%;padding:8px 10px;font-size:14px;border:1px solid #ccc;border-radius:6px;
-               box-sizing:border-box;height:44px;line-height:44px}
-
+  label,input,select { width:100% }
+  input,select { padding:8px 10px; font-size:14px; border:1px solid #ccc;
+                 border-radius:6px; box-sizing:border-box; height:44px; line-height:44px }
   /* przycisk kołowy */
-  #submitBtn{flex:0 0 44px;height:44px;border:none;border-radius:50%;cursor:pointer;
-             display:flex;align-items:center;justify-content:center;font-size:20px;
-             background:var(--primary);color:var(--white);transition:opacity .2s}
-  #submitBtn:hover{opacity:.85}
-
-  #status{margin-top:10px;font-size:14px}
-
-  /* wąskie ekrany – pola pod sobą */
-  @media(max-width:420px){
-    .emailField,.regionField{flex:0 0 100%}
-    #submitBtn{margin:12px auto 0}
+  #submitBtn { flex:0 0 44px; height:44px; border:none; border-radius:50%; cursor:pointer;
+               display:flex; align-items:center; justify-content:center; font-size:20px;
+               background:var(--primary); color:var(--white); transition:opacity .2s }
+  #submitBtn:hover { opacity:.85 }
+  #status { margin-top:10px; font-size:14px }
+  @media(max-width:420px) {
+    .emailField,.regionField { flex:0 0 100% }
+    #submitBtn { margin:12px auto 0 }
   }
 </style>
 </head>
@@ -67,7 +60,6 @@
         </select>
       </label>
 
-      <!-- okrągły przycisk -->
       <button id="submitBtn" type="submit" aria-label="Zapisz">✓</button>
     </div>
   </form>
@@ -75,50 +67,72 @@
 </div>
 
 <script>
-/* --- mapowanie kraj → region + helpery --- */
+/* ——— mapowanie kraj → region + helpery ——— */
 const REGIONS={NA:['US','CA','BM'],CA:['MX','BZ','CR','GT','HN','NI','PA','SV'],
-CB:['AG','BS','BB','BQ','CU','CW','DM','DO','GD','GP','HT','JM','KN','LC','MF','MQ','MS','PR','SX','TT','VC','VG','VI'],
-SA:['AR','BO','BR','CL','CO','EC','FK','GF','GY','PE','PY','SR','UY','VE'],NEU:['DK','EE','FI','FO','GB','GG','GI','IM','IE','IS','JE','NO','SE','SJ'],
-WEU:['AT','BE','CH','DE','FR','LI','LU','MC','NL'],SEU:['AD','AL','BA','ES','GR','HR','IT','ME','MK','MT','PT','RS','SI','SM','VA'],
-EEU:['BG','CZ','HU','MD','PL','RO','SK','UA','LV','LT'],MENA:['AE','BH','DJ','DZ','EG','IQ','IL','JO','KW','LB','LY','MA','OM','PS','QA','SA','SD','SY','TN','YE'],
-SSA:['AO','BF','BI','BJ','BW','CD','CF','CG','CI','CM','CV','ER','ET','GA','GH','GM','GN','GQ','GW','KE','KM','LR','LS','MG','ML','MR','MU','MW','MZ','NA','NE','NG','RE','RW','SC','SH','SL','SN','SO','SS','ST','SZ','TD','TG','TZ','UG','YT','ZA','ZM','ZW'],
-CAS:['KZ','KG','TJ','TM','UZ'],SAS:['AF','BD','BT','IN','LK','MM','NP','PK'],
-EAS:['CN','HK','JP','KP','KR','MN','MO','TW'],SEAS:['BN','ID','KH','LA','MY','PH','SG','TH','TL','VN'],
-OCE:['AS','AU','CK','FJ','FM','GU','KI','MH','NC','NF','NR','NU','NZ','PG','PW','SB','TK','TO','TV','VU','WF','WS']};
-const cToR=cc=>Object.entries(REGIONS).find(([,l])=>l.includes(cc))?.[0]||'';
+CB:['AG','BS','BB','BQ','CU','CW','DM','DO','GD','GP','HT','JM','KN','LC','MF','MQ','MS',
+    'PR','SX','TT','VC','VG','VI'],
+SA:['AR','BO','BR','CL','CO','EC','FK','GF','GY','PE','PY','SR','UY','VE'],
+NEU:['DK','EE','FI','FO','GB','GG','GI','IM','IE','IS','JE','NO','SE','SJ'],
+WEU:['AT','BE','CH','DE','FR','LI','LU','MC','NL'],
+SEU:['AD','AL','BA','ES','GR','HR','IT','ME','MK','MT','PT','RS','SI','SM','VA'],
+EEU:['BG','CZ','HU','MD','PL','RO','SK','UA','LV','LT'],
+MENA:['AE','BH','DJ','DZ','EG','IQ','IL','JO','KW','LB','LY','MA','OM',
+      'PS','QA','SA','SD','SY','TN','YE'],
+SSA:['AO','BF','BI','BJ','BW','CD','CF','CG','CI','CM','CV','ER','ET','GA','GH','GM',
+      'GN','GQ','GW','KE','KM','LR','LS','MG','ML','MR','MU','MW','MZ','NA','NE','NG',
+      'RE','RW','SC','SH','SL','SN','SO','SS','ST','SZ','TD','TG','TZ','UG','YT','ZA',
+      'ZM','ZW'],
+CAS:['KZ','KG','TJ','TM','UZ'], S
+AS:['AF','BD','BT','IN','LK','MM','NP','PK'],
+EAS:['CN','HK','JP','KP','KR','MN','MO','TW'],
+SEAS:['BN','ID','KH','LA','MY','PH','SG','TH','TL','VN'],
+OCE:['AS','AU','CK','FJ','FM','GU','KI','MH','NC','NF','NR','NU','NZ','PG',
+     'PW','SB','TK','TO','TV','VU','WF','WS']};
+const cToR = cc => Object.entries(REGIONS)
+                   .find(([, list]) => list.includes(cc))?.[0] || '';
 
-const btn=document.getElementById('toggleBtn'),
-      wrap=document.getElementById('formWrap'),
-      form=document.getElementById('subForm'),
-      region=document.getElementById('regionDropdown'),
-      email=document.getElementById('email'),
-      status=document.getElementById('status');
+/* — UI elementy — */
+const btn     = document.getElementById('toggleBtn'),
+      wrap    = document.getElementById('formWrap'),
+      form    = document.getElementById('subForm'),
+      region  = document.getElementById('regionDropdown'),
+      email   = document.getElementById('email'),
+      status  = document.getElementById('status');
 
-btn.onclick=()=>{wrap.style.display=wrap.style.display==='none'||!wrap.style.display?'block':'none';};
+btn.onclick = () =>
+  wrap.style.display = (wrap.style.display === 'none' || !wrap.style.display) ? 'block' : 'none';
 
 /* e-mail z parenta */
-window.addEventListener('message',ev=>{
-  if(ev.data && 'email' in ev.data){
-    email.value=ev.data.email||''; if(ev.data.email) email.placeholder='';
+window.addEventListener('message', ev => {
+  if (ev.origin !== 'https://www.resoul.doctor') return;  // bezpieczeństwo
+  if (ev.data && 'email' in ev.data) {
+    email.value = ev.data.email || '';
+    if (ev.data.email) email.placeholder = '';
   }
 });
 
 /* IP → region */
-(async()=>{try{const j=await (await fetch('https://ipapi.co/json/')).json();
-       const r=cToR(j.country_code); if(r) region.value=r;}catch{}})();
+(async () => {
+  try {
+    const j = await (await fetch('https://ipapi.co/json/')).json();
+    const r = cToR(j.country_code);
+    if (r) region.value = r;
+  } catch {/* ignorujemy błędy */ }
+})();
 
 /* wysyłka do strony Wix */
-form.onsubmit=e=>{
+form.onsubmit = e => {
   e.preventDefault();
-  const payload={email:email.value.trim(),region:region.value};
-  window.parent.postMessage({subscribe:payload},'*');
-  status.textContent='⏳ wysyłanie…';
+  const payload = { email: email.value.trim(), region: region.value };
+  window.parent.postMessage({ subscribe: payload }, 'https://www.resoul.doctor');
+  status.textContent = '⏳ wysyłanie…';
 };
 
 /* status od strony Wix */
 window.addEventListener('message', ev => {
-  if (ev.data?.saved)  status.textContent = 'Dziękujemy! Zapisano ✅';
-  if (ev.data?.error)  status.textContent = '❌ ' + ev.data.error;
+  if (ev.origin !== 'https://www.resoul.doctor') return;
+  if (ev.data?.saved) status.textContent = 'Dziękujemy! Zapisano ✅';
+  if (ev.data?.error) status.textContent = '❌ ' + ev.data.error;
 });
 </script>
 </body>
