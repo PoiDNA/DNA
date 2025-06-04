@@ -4,42 +4,19 @@
 <meta charset="UTF-8">
 <title>Powiadomienia o sesjach</title>
 <style>
-  :root{
-    --btn-bg:#f2f2f2;
-    --btn-border:#666;
-    --primary:#0d6efd;
-    --white:#fff;
-  }
+  :root{--btn-bg:#f2f2f2;--btn-border:#666;--primary:#0d6efd;--white:#fff;}
   body{margin:0;font-family:Arial,Helvetica,sans-serif;text-align:center;background:transparent}
-
-  /* przycisk */
-  #toggleBtn{
-    margin-top:8px;padding:.7em 1.4em;font-size:15px;cursor:pointer;
-    border:1px solid var(--btn-border);border-radius:6px;
-    background:var(--btn-bg);color:#333;transition:opacity .2s}
+  #toggleBtn{margin-top:8px;padding:.7em 1.4em;font-size:15px;cursor:pointer;border:1px solid var(--btn-border);
+             border-radius:6px;background:var(--btn-bg);color:#333;transition:opacity .2s}
   #toggleBtn:hover{opacity:.85}
-
-  /* formularz */
-  #formWrap{
-    max-width:520px;margin:12px auto;padding:20px 24px;border-radius:10px;
-    border:1px solid #ccc;background:var(--white);
-    box-shadow:0 4px 12px rgba(0,0,0,.1);display:none}
-
-  .row{display:flex;gap:8px;flex-wrap:wrap}
-  .emailField{flex:0 0 30%}
-  .regionField{flex:0 0 70%}
-
-  /* label bez tekstu – tylko kontener, nie zajmuje miejsca */
+  #formWrap{max-width:520px;margin:12px auto;padding:20px 24px;border-radius:10px;border:1px solid #ccc;
+            background:var(--white);box-shadow:0 4px 12px rgba(0,0,0,.1);display:none}
+  .row{display:flex;gap:8px;flex-wrap:wrap}.emailField{flex:0 0 30%}.regionField{flex:0 0 70%}
   label{display:block;width:100%}
-
-  input,select{
-    width:100%;padding:8px 10px;font-size:14px;border:1px solid #ccc;
-    border-radius:6px;box-sizing:border-box;height:44px;line-height:44px}
-
-  #submitBtn{
-    margin-top:18px;width:100%;padding:10px 0;border:none;border-radius:6px;
-    background:var(--primary);color:var(--white);font-size:15px;cursor:pointer}
-
+  input,select{width:100%;padding:8px 10px;font-size:14px;border:1px solid #ccc;border-radius:6px;
+               box-sizing:border-box;height:44px;line-height:44px}
+  #submitBtn{margin-top:18px;width:100%;padding:10px 0;border:none;border-radius:6px;
+             background:var(--primary);color:var(--white);font-size:15px;cursor:pointer}
   #status{margin-top:10px;font-size:14px}
 </style>
 </head>
@@ -53,9 +30,8 @@
       <label class="emailField">
         <input type="email" id="email" required placeholder="Email">
       </label>
-
       <label class="regionField">
-        <select id="regionDropdown" name="region" required>
+        <select id="regionDropdown" required>
           <option value="" disabled selected>Wybierz region</option>
           <option value="NA">North America</option><option value="CA">Central America</option>
           <option value="CB">Caribbean</option><option value="SA">South America</option>
@@ -68,70 +44,34 @@
         </select>
       </label>
     </div>
-
     <button id="submitBtn" type="submit">Zapisz</button>
   </form>
   <div id="status"></div>
 </div>
 
 <script>
-/* mapowanie kraj → region */
-const REGIONS={NA:['US','CA','BM'],CA:['MX','BZ','CR','GT','HN','NI','PA','SV'],
-CB:['AG','BS','BB','BQ','CU','CW','DM','DO','GD','GP','HT','JM','KN','LC','MF','MQ','MS','PR','SX','TT','VC','VG','VI'],
-SA:['AR','BO','BR','CL','CO','EC','FK','GF','GY','PE','PY','SR','UY','VE'],
-NEU:['DK','EE','FI','FO','GB','GG','GI','IM','IE','IS','JE','NO','SE','SJ'],
-WEU:['AT','BE','CH','DE','FR','LI','LU','MC','NL'],
-SEU:['AD','AL','BA','ES','GR','HR','IT','ME','MK','MT','PT','RS','SI','SM','VA'],
-EEU:['BG','CZ','HU','MD','PL','RO','SK','UA','LV','LT'],
-MENA:['AE','BH','DJ','DZ','EG','IQ','IL','JO','KW','LB','LY','MA','OM','PS','QA','SA','SD','SY','TN','YE'],
-SSA:['AO','BF','BI','BJ','BW','CD','CF','CG','CI','CM','CV','ER','ET','GA','GH','GM','GN','GQ','GW','KE','KM','LR','LS',
-     'MG','ML','MR','MU','MW','MZ','NA','NE','NG','RE','RW','SC','SH','SL','SN','SO','SS','ST','SZ',
-     'TD','TG','TZ','UG','YT','ZA','ZM','ZW'],
-CAS:['KZ','KG','TJ','TM','UZ'],
-SAS:['AF','BD','BT','IN','LK','MM','NP','PK'],
-EAS:['CN','HK','JP','KP','KR','MN','MO','TW'],
-SEAS:['BN','ID','KH','LA','MY','PH','SG','TH','TL','VN'],
-OCE:['AS','AU','CK','FJ','FM','GU','KI','MH','NC','NF','NR','NU','NZ','PG','PW','SB','TK','TO','TV','VU','WF','WS']};
+/* --- mapowanie kraj → region + helpery (bez zmian) --- */
+const REGIONS={NA:['US','CA','BM'],CA:['MX','BZ','CR','GT','HN','NI','PA','SV'],CB:['AG','BS','BB','BQ','CU','CW','DM','DO','GD','GP','HT','JM','KN','LC','MF','MQ','MS','PR','SX','TT','VC','VG','VI'],
+SA:['AR','BO','BR','CL','CO','EC','FK','GF','GY','PE','PY','SR','UY','VE'],NEU:['DK','EE','FI','FO','GB','GG','GI','IM','IE','IS','JE','NO','SE','SJ'],WEU:['AT','BE','CH','DE','FR','LI','LU','MC','NL'],
+SEU:['AD','AL','BA','ES','GR','HR','IT','ME','MK','MT','PT','RS','SI','SM','VA'],EEU:['BG','CZ','HU','MD','PL','RO','SK','UA','LV','LT'],MENA:['AE','BH','DJ','DZ','EG','IQ','IL','JO','KW','LB','LY','MA','OM','PS','QA','SA','SD','SY','TN','YE'],
+SSA:['AO','BF','BI','BJ','BW','CD','CF','CG','CI','CM','CV','ER','ET','GA','GH','GM','GN','GQ','GW','KE','KM','LR','LS','MG','ML','MR','MU','MW','MZ','NA','NE','NG','RE','RW','SC','SH','SL','SN','SO','SS','ST','SZ','TD','TG','TZ','UG','YT','ZA','ZM','ZW'],
+CAS:['KZ','KG','TJ','TM','UZ'],SAS:['AF','BD','BT','IN','LK','MM','NP','PK'],EAS:['CN','HK','JP','KP','KR','MN','MO','TW'],
+SEAS:['BN','ID','KH','LA','MY','PH','SG','TH','TL','VN'],OCE:['AS','AU','CK','FJ','FM','GU','KI','MH','NC','NF','NR','NU','NZ','PG','PW','SB','TK','TO','TV','VU','WF','WS']};
 const countryToRegion=cc=>Object.entries(REGIONS).find(([,l])=>l.includes(cc))?.[0]||'';
-
-/* elementy */
-const toggleBtn=document.getElementById('toggleBtn');
-const formWrap=document.getElementById('formWrap');
-const form=document.getElementById('subForm');
-const regionSel=document.getElementById('regionDropdown');
-const emailInp=document.getElementById('email');
-const statusBox=document.getElementById('status');
-
-/* toggle formularza */
-toggleBtn.onclick=()=>{formWrap.style.display=formWrap.style.display==='none'||!formWrap.style.display?'block':'none';};
-
-/* auto-email z query stringu */
-const qs=new URLSearchParams(window.location.search);
-const emailQS=qs.get('email');
-if(emailQS){emailInp.value=emailQS;emailInp.placeholder='';}
-
-/* auto-region z IP */
-(async()=>{
-  try{
-    const data=await fetch('https://ipapi.co/json/').then(r=>r.json());
-    const reg=countryToRegion(data.country_code);
-    if(reg) regionSel.value=reg;
-  }catch(e){/* brak sieci – pomijamy */}
-})();
-
-/* wysyłanie */
-form.onsubmit=async e=>{
+/* elem. */
+const btn=document.getElementById('toggleBtn'),wrap=document.getElementById('formWrap'),form=document.getElementById('subForm'),
+      region=document.getElementById('regionDropdown'),email=document.getElementById('email'),status=document.getElementById('status');
+btn.onclick=()=>{wrap.style.display=wrap.style.display==='none'||!wrap.style.display?'block':'none';};
+/* e-mail z parent */
+window.addEventListener('message',ev=>{if(ev.data && 'email' in ev.data){email.value=ev.data.email||'';if(ev.data.email)email.placeholder='';}});
+/* IP → region */
+(async()=>{try{const j=await (await fetch('https://ipapi.co/json/')).json();const r=countryToRegion(j.country_code);if(r)region.value=r;}catch{}})();
+/* wysyłka do parent */
+form.onsubmit=e=>{
   e.preventDefault();
-  statusBox.textContent='Trwa zapisywanie…';
-  const payload={email:emailInp.value.trim(),region:regionSel.value};
-  try{
-    const res=await fetch('https://YOUR-WIX-DOMAIN.com/_functions/subscribeSession',{
-      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    statusBox.textContent=res.ok?'Dziękujemy! Zapisano ✅':'❌ Błąd serwera ('+res.status+').';
-    if(res.ok) form.reset();
-  }catch(err){
-    console.error(err);statusBox.textContent='❌ Błąd sieci. Spróbuj ponownie.';
-  }
+  const payload={email:email.value.trim(),region:region.value};
+  window.parent.postMessage({subscribe:payload},'*');
+  status.textContent='⏳ wysyłanie…';
 };
 </script>
 </body>
